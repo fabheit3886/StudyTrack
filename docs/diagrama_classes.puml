@@ -1,0 +1,66 @@
+@startuml
+title StudyTrack - Diagrama de Classes
+class Usuario {
+    - nome_usuario: String
+    - email: String
+    - senha: String
+    + autenticar()
+    + alterarSenha()
+}
+
+class Aluno {
+    - nome: String
+    - matricula: String
+    - turma: String
+    - curso: String
+
+}
+
+class Disciplina {
+    - nome_disciplina: String
+    - descricao_disciplina: String
+    + listar_atividades()
+
+}
+
+class Material {
+    - nome_material: String
+    - tipo: String
+    - descricao_material: String
+    - fonte: String
+    - categoria: String
+    - autor: String
+    + abrir_material()
+    + buscar_material()
+}
+
+class PlanoEstudo {
+    - nome_plano: String
+    - objetivo: String
+    - descricao: String
+    - data_inicio: Date
+    - data_fim: Date
+    + adicionar_atividade()
+    + estabelecer_meta()
+    +
+
+}
+
+class Atividade {
+    - titulo: String
+    - descricao: String
+    - prazo: Date
+    - prioridade: String
+    - status: String
+    + concluir_atividade()
+    + associar_material()
+    + definir_prioridade()
+    + estabelecer_data()
+}
+
+Usuario <|-- Aluno 
+Aluno *-- PlanoEstudo 
+PlanoEstudo *-- Atividade
+Disciplina -- PlanoEstudo
+Atividade -- Material
+@enduml
