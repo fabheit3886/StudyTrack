@@ -9,7 +9,9 @@ from app.models.validacao import identificador_positivo, texto_obrigatorio
 class Usuario:
     """Representa uma conta, mantendo seus dados encapsulados."""
 
-    def __init__(self, id_usuario: int, nome_usuario: str, email: str, senha: str) -> None:
+    def __init__(
+        self, id_usuario: int, nome_usuario: str, email: str, senha: str
+    ) -> None:
         self._id_usuario = identificador_positivo(id_usuario, "ID do usuário")
         self.nome_usuario = nome_usuario
         self.email = email

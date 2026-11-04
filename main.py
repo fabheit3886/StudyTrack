@@ -17,11 +17,12 @@ except (AttributeError, OSError):
     pass
 
 ADMIN_LOGIN = "admin"
-ADMIN_PASSWORD = "admin123"  # Credencial fixa apenas para demonstração acadêmica.
+ADMIN_PASSWORD = "admin123"
 
 
 class Visual:
     """Paleta ANSI usada para manter uma apresentação consistente no terminal."""
+
     cyan = "\033[96m" if sys.stdout.isatty() else ""
     blue = "\033[94m" if sys.stdout.isatty() else ""
     green = "\033[92m" if sys.stdout.isatty() else ""
@@ -34,11 +35,15 @@ class Visual:
 
 def _faixa(titulo: str, subtitulo: str = "") -> None:
     """Desenha um cabeçalho simples e alinhado para cada área."""
-    print(f"\n{Visual.cyan}{Visual.bold}╭──────────────────────────────────────────────────────────╮{Visual.reset}")
+    print(
+        f"\n{Visual.cyan}{Visual.bold}╭──────────────────────────────────────────────────────────╮{Visual.reset}"
+    )
     print(f"{Visual.cyan}{Visual.bold}│  STUDYTRACK  ·  {titulo:<43}│{Visual.reset}")
     if subtitulo:
         print(f"{Visual.cyan}│  {subtitulo[:54]:<54}│{Visual.reset}")
-    print(f"{Visual.cyan}{Visual.bold}╰──────────────────────────────────────────────────────────╯{Visual.reset}\n")
+    print(
+        f"{Visual.cyan}{Visual.bold}╰──────────────────────────────────────────────────────────╯{Visual.reset}\n"
+    )
 
 
 def _carregando(texto: str) -> None:
@@ -56,8 +61,12 @@ def _carregando(texto: str) -> None:
 
 def _mensagem(texto: str, tipo: str = "info") -> None:
     """Exibe respostas com cor sem alterar o conteúdo em terminal sem ANSI."""
-    cor = {"ok": Visual.green, "erro": Visual.red, "aviso": Visual.yellow,
-           "info": Visual.cyan}.get(tipo, "")
+    cor = {
+        "ok": Visual.green,
+        "erro": Visual.red,
+        "aviso": Visual.yellow,
+        "info": Visual.cyan,
+    }.get(tipo, "")
     icone = {"ok": "✓", "erro": "✗", "aviso": "!", "info": "›"}.get(tipo, "›")
     print(f"{cor}{icone}  {texto}{Visual.reset}")
 
@@ -87,15 +96,33 @@ def _mostrar(itens: list[dict]) -> None:
         _mensagem("Nenhum registro encontrado.", "aviso")
         return
     rotulos = {
-        "id_material": "ID", "nome_material": "Nome", "tipo": "Tipo",
-        "descricao_material": "Sobre", "link": "Link", "categoria": "Categoria",
-        "autor": "Autor", "id_atividade": "ID", "titulo": "Atividade",
-        "descricao": "Detalhes", "prazo": "Prazo", "prioridade": "Prioridade",
-        "status": "Situação", "id_plano": "ID", "nome_plano": "Plano",
-        "objetivo": "Objetivo", "data_inicio": "Início", "data_fim": "Fim",
-        "id_disciplina": "Disciplina", "nome_disciplina": "Disciplina",
-        "descricao_disciplina": "Sobre", "id_aluno": "ID", "nome_usuario": "Aluno",
-        "email": "E-mail", "matricula": "Matrícula", "turma": "Turma", "curso": "Curso",
+        "id_material": "ID do material",
+        "nome_material": "Nome",
+        "tipo": "Tipo",
+        "descricao_material": "Sobre",
+        "link": "Link",
+        "categoria": "Categoria",
+        "autor": "Autor",
+        "id_atividade": "ID da atividade",
+        "titulo": "Atividade",
+        "descricao": "Detalhes",
+        "prazo": "Prazo",
+        "prioridade": "Prioridade",
+        "status": "Situação",
+        "id_plano": "ID",
+        "nome_plano": "Plano",
+        "objetivo": "Objetivo",
+        "data_inicio": "Início",
+        "data_fim": "Fim",
+        "id_disciplina": "Disciplina",
+        "nome_disciplina": "Disciplina",
+        "descricao_disciplina": "Sobre",
+        "id_aluno": "ID do aluno",
+        "nome_usuario": "Aluno",
+        "email": "E-mail",
+        "matricula": "Matrícula",
+        "turma": "Turma",
+        "curso": "Curso",
     }
     internos = {"id_usuario"}
     for item in itens:
@@ -105,10 +132,16 @@ def _mostrar(itens: list[dict]) -> None:
                 continue
             rotulo = rotulos.get(chave, chave.replace("_", " ").capitalize())
             if chave == "status":
-                valor = {"pendente": "Pendente", "em andamento": "Em andamento",
-                         "concluida": "Concluída"}.get(valor, valor)
+                valor = {
+                    "pendente": "Pendente",
+                    "em andamento": "Em andamento",
+                    "concluida": "Concluída",
+                }.get(valor, valor)
             campos.append(f"{rotulo}: {valor or '—'}")
-        print(f"  {Visual.blue}•{Visual.reset} " + f"  {Visual.dim}|{Visual.reset}  ".join(campos))
+        print(
+            f"  {Visual.blue}•{Visual.reset} "
+            + f"  {Visual.dim}|{Visual.reset}  ".join(campos)
+        )
         if sys.stdout.isatty():
             time.sleep(0.5)
 
@@ -119,8 +152,10 @@ def _tela_aluno(servico: StudyTrackService, aluno: dict) -> None:
         planos = servico.listar_planos_aluno(aluno["id_aluno"])
         tarefas = servico.listar_atividades_aluno(aluno["id_aluno"])
         concluidas = sum(t["status"] == "concluida" for t in tarefas)
-        _faixa(f"OLÁ, {aluno['nome_usuario'].upper()}",
-               f"Seu progresso: {concluidas}/{len(tarefas)} tarefas concluídas  ·  {len(planos)} plano(s)")
+        _faixa(
+            f"OLÁ, {aluno['nome_usuario'].upper()}",
+            f"Seu progresso: {concluidas}/{len(tarefas)} tarefas concluídas  ·  {len(planos)} plano(s)",
+        )
         print(f"{Visual.green}1{Visual.reset}  Criar plano de estudo")
         print(f"{Visual.green}2{Visual.reset}  Criar atividade")
         print(f"{Visual.green}3{Visual.reset}  Ver minhas atividades")
@@ -132,8 +167,11 @@ def _tela_aluno(servico: StudyTrackService, aluno: dict) -> None:
         try:
             if opcao == "1":
                 resultado = servico.criar_plano(
-                    aluno["id_aluno"], input("Nome do plano: "), input("Objetivo de estudo: "),
-                    input("Descrição (opcional): "), _data("Data de início (AAAA-MM-DD, vazio = hoje): "),
+                    aluno["id_aluno"],
+                    input("Nome do plano: "),
+                    input("Objetivo de estudo: "),
+                    input("Descrição (opcional): "),
+                    _data("Data de início (AAAA-MM-DD, vazio = hoje): "),
                     _data("Data de fim (AAAA-MM-DD, opcional): "),
                 )
                 _mensagem(f"Plano criado com ID {resultado['id_plano']}.", "ok")
@@ -148,9 +186,16 @@ def _tela_aluno(servico: StudyTrackService, aluno: dict) -> None:
                 _mostrar(disciplinas)
                 prazo = _data("Prazo (AAAA-MM-DD, opcional): ")
                 resultado = servico.criar_atividade_aluno(
-                    aluno["id_aluno"], _inteiro("ID do seu plano: "), _inteiro("ID da disciplina: "),
-                    input("Atividade: "), input("Detalhes: "), prazo,
-                    input("Prioridade (baixa/media/alta, padrão media): ").strip().lower() or "media",
+                    aluno["id_aluno"],
+                    _inteiro("ID do seu plano: "),
+                    _inteiro("ID da disciplina: "),
+                    input("Atividade: "),
+                    input("Detalhes: "),
+                    prazo,
+                    input("Prioridade (baixa/media/alta, padrão media): ")
+                    .strip()
+                    .lower()
+                    or "media",
                 )
                 _mensagem(f"Atividade criada com ID {resultado['id_atividade']}.", "ok")
             elif opcao == "3":
@@ -158,10 +203,22 @@ def _tela_aluno(servico: StudyTrackService, aluno: dict) -> None:
             elif opcao == "4":
                 _mostrar(tarefas)
                 atividade_id = _inteiro("ID da sua atividade: ")
-                prioridade = input("Prioridade nova (vazio mantém): ").strip().lower() or None
-                status = input("Status novo (pendente/em andamento/concluida, vazio mantém): ").strip().lower() or None
+                prioridade = (
+                    input("Prioridade nova (vazio mantém): ").strip().lower() or None
+                )
+                status = (
+                    input(
+                        "Status novo (pendente/em andamento/concluida, vazio mantém): "
+                    )
+                    .strip()
+                    .lower()
+                    or None
+                )
                 servico.atualizar_atividade_aluno(
-                    aluno["id_aluno"], atividade_id, prioridade=prioridade, status=status,
+                    aluno["id_aluno"],
+                    atividade_id,
+                    prioridade=prioridade,
+                    status=status,
                 )
                 _mensagem("Acompanhamento atualizado.", "ok")
             elif opcao == "5":
@@ -175,7 +232,9 @@ def _tela_aluno(servico: StudyTrackService, aluno: dict) -> None:
                 if not any(t["id_atividade"] == atividade_id for t in tarefas):
                     raise ValueError("A atividade não pertence à sua conta.")
                 material_id = _inteiro("ID do material: ")
-                servico.associar_material_aluno(aluno["id_aluno"], atividade_id, material_id)
+                servico.associar_material_aluno(
+                    aluno["id_aluno"], atividade_id, material_id
+                )
                 _mensagem("Material associado à atividade.", "ok")
             elif opcao == "0":
                 return
@@ -188,7 +247,10 @@ def _tela_aluno(servico: StudyTrackService, aluno: dict) -> None:
 def _tela_admin(servico: StudyTrackService) -> None:
     """Permite ao administrador manter o catálogo da biblioteca."""
     while True:
-        _faixa("ADMINISTRAÇÃO DO ACERVO", "Cadastro e manutenção dos materiais da biblioteca")
+        _faixa(
+            "ADMINISTRAÇÃO DO ACERVO",
+            "Cadastro e manutenção dos materiais da biblioteca",
+        )
         print("1  Ver catálogo")
         print("2  Adicionar material")
         print("3  Remover material")
@@ -199,10 +261,17 @@ def _tela_admin(servico: StudyTrackService) -> None:
                 _mostrar(servico.buscar_catalogo())
             elif opcao == "2":
                 item = servico.adicionar_material_admin(
-                    input("Título/nome: "), input("Tipo: "), input("Descrição/assunto: "),
-                    input("Link (opcional): "), input("Categoria/disciplina: "), input("Autor: "),
+                    input("Título/nome: "),
+                    input("Tipo: "),
+                    input("Descrição/assunto: "),
+                    input("Link (opcional): "),
+                    input("Categoria/disciplina: "),
+                    input("Autor: "),
                 )
-                _mensagem(f"Material adicionado ao catálogo com ID {item['id_material']}.", "ok")
+                _mensagem(
+                    f"Material adicionado ao catálogo com ID {item['id_material']}.",
+                    "ok",
+                )
             elif opcao == "3":
                 _mostrar(servico.buscar_catalogo())
                 servico.remover_material_admin(_inteiro("ID do material a remover: "))
@@ -218,7 +287,10 @@ def _tela_admin(servico: StudyTrackService) -> None:
 def executar_menu(servico: StudyTrackService) -> None:
     """Menu inicial com caminhos separados para aluno e administrador."""
     while True:
-        _faixa("ACOMPANHE SEUS ESTUDOS", "Organize tarefas e encontre materiais para estudar")
+        _faixa(
+            "ACOMPANHE SEUS ESTUDOS",
+            "Organize tarefas e encontre materiais para estudar",
+        )
         print("1  Criar conta de aluno")
         print("2  Entrar como aluno")
         print("3  Entrar como administrador")
@@ -227,8 +299,12 @@ def executar_menu(servico: StudyTrackService) -> None:
         try:
             if opcao == "1":
                 aluno = servico.cadastrar_aluno(
-                    input("Nome: "), input("E-mail: "), getpass("Crie uma senha (mínimo 8 caracteres): "),
-                    input("Matrícula: "), input("Turma: "), input("Curso: "),
+                    input("Nome: "),
+                    input("E-mail: "),
+                    getpass("Crie uma senha (mínimo 8 caracteres): "),
+                    input("Matrícula: "),
+                    input("Turma: "),
+                    input("Curso: "),
                 )
                 _mensagem("Conta criada. Bem-vindo ao seu espaço de estudos!", "ok")
                 _tela_aluno(servico, aluno)
@@ -266,6 +342,7 @@ def main() -> None:
         executar_menu(servico)
     except (KeyboardInterrupt, EOFError):
         print("\nExecução encerrada.")
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":

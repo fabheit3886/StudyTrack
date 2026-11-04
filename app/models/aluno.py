@@ -8,8 +8,15 @@ class Aluno(Usuario):
     """Conta de usuário com matrícula, turma e curso."""
 
     def __init__(
-        self, id_aluno: int, id_usuario: int, nome_usuario: str, email: str,
-        senha: str, matricula: str, turma: str, curso: str,
+        self,
+        id_aluno: int,
+        id_usuario: int,
+        nome_usuario: str,
+        email: str,
+        senha: str,
+        matricula: str,
+        turma: str,
+        curso: str,
     ) -> None:
         super().__init__(id_usuario, nome_usuario, email, senha)
         self._id_aluno = identificador_positivo(id_aluno, "ID do aluno")

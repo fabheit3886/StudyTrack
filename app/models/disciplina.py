@@ -7,8 +7,9 @@ from app.models.validacao import identificador_positivo, texto_obrigatorio
 class Disciplina:
     """Matéria pesquisável no planejamento acadêmico."""
 
-    def __init__(self, id_disciplina: int, nome_disciplina: str,
-                 descricao_disciplina: str = "") -> None:
+    def __init__(
+        self, id_disciplina: int, nome_disciplina: str, descricao_disciplina: str = ""
+    ) -> None:
         self._id_disciplina = identificador_positivo(id_disciplina, "ID da disciplina")
         self.nome_disciplina = nome_disciplina
         self.descricao_disciplina = descricao_disciplina

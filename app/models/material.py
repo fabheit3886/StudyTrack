@@ -7,9 +7,16 @@ from app.models.validacao import identificador_positivo, texto_obrigatorio
 class Material:
     """Recurso de apoio que pode ser associado a uma atividade."""
 
-    def __init__(self, id_material: int, nome_material: str, tipo: str,
-                 descricao_material: str = "", link: str = "",
-                 categoria: str = "", autor: str = "") -> None:
+    def __init__(
+        self,
+        id_material: int,
+        nome_material: str,
+        tipo: str,
+        descricao_material: str = "",
+        link: str = "",
+        categoria: str = "",
+        autor: str = "",
+    ) -> None:
         self._id_material = identificador_positivo(id_material, "ID do material")
         self.nome_material = nome_material
         self.tipo = tipo

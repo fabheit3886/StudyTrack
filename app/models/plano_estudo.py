@@ -9,9 +9,16 @@ from app.models.validacao import data_ou_nula, identificador_positivo, texto_obr
 class PlanoEstudo:
     """Agrupa objetivos e atividades dentro de um período."""
 
-    def __init__(self, id_plano: int, id_aluno: int, nome_plano: str,
-                 objetivo: str, descricao: str = "", data_inicio: date | None = None,
-                 data_fim: date | None = None) -> None:
+    def __init__(
+        self,
+        id_plano: int,
+        id_aluno: int,
+        nome_plano: str,
+        objetivo: str,
+        descricao: str = "",
+        data_inicio: date | None = None,
+        data_fim: date | None = None,
+    ) -> None:
         self._id_plano = identificador_positivo(id_plano, "ID do plano")
         self._id_aluno = identificador_positivo(id_aluno, "ID do aluno")
         self.nome_plano = nome_plano

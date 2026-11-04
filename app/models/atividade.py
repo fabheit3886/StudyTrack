@@ -12,9 +12,17 @@ class Atividade:
     PRIORIDADES = {"baixa", "media", "alta"}
     STATUS = {"pendente", "em andamento", "concluida"}
 
-    def __init__(self, id_atividade: int, id_plano: int, id_disciplina: int,
-                 titulo: str, descricao: str = "", prazo: date | None = None,
-                 prioridade: str = "media", status: str = "pendente") -> None:
+    def __init__(
+        self,
+        id_atividade: int,
+        id_plano: int,
+        id_disciplina: int,
+        titulo: str,
+        descricao: str = "",
+        prazo: date | None = None,
+        prioridade: str = "media",
+        status: str = "pendente",
+    ) -> None:
         self._id_atividade = identificador_positivo(id_atividade, "ID da atividade")
         self._id_plano = identificador_positivo(id_plano, "ID do plano")
         self._id_disciplina = identificador_positivo(id_disciplina, "ID da disciplina")
@@ -89,7 +97,9 @@ class Atividade:
     def status(self, valor: str) -> None:
         valor = texto_obrigatorio(valor, "Status", 30).lower()
         if valor not in self.STATUS:
-            raise ValidationError("Status deve ser pendente, em andamento ou concluida.")
+            raise ValidationError(
+                "Status deve ser pendente, em andamento ou concluida."
+            )
         self._status = valor
 
     def concluir(self) -> None:
