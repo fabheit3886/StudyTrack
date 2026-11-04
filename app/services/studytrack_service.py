@@ -1,17 +1,25 @@
 """Casos de uso da aplicação StudyTrack."""
 
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
+# --- Biblioteca padrão ---
 import hashlib
 import hmac
 import secrets
 from datetime import date
 from typing import Any
 
+# --- Modelos de domínio ---
 from app.models.aluno import Aluno
 from app.models.atividade import Atividade
 from app.models.atividade_material import AtividadeMaterial
 from app.models.disciplina import Disciplina
 from app.models.material import Material
 from app.models.plano_estudo import PlanoEstudo
+
+# --- Persistência e exceções ---
 from app.repositories.database import JsonRepository
 from exceptions.erros import NotFoundError, ValidationError
 
@@ -19,8 +27,17 @@ from exceptions.erros import NotFoundError, ValidationError
 class StudyTrackService:
     """Coordena validação de domínio e persistência dos casos de uso."""
 
+    # ==================================================================
+    # 1. INICIALIZAÇÃO
+    # ==================================================================
+
     def __init__(self, repositorio: JsonRepository) -> None:
         self.repositorio = repositorio
+
+    # ==================================================================
+    # 2. AUTENTICAÇÃO
+    #    Login do aluno e verificação da senha (PBKDF2)
+    # ==================================================================
 
     def autenticar_aluno(self, email: str, senha: str) -> dict[str, Any]:
         """Autentica aluno usando o hash derivado armazenado."""
@@ -64,6 +81,11 @@ class StudyTrackService:
             return False
         calculado = hashlib.pbkdf2_hmac("sha256", senha.encode("utf-8"), salt, 200_000)
         return hmac.compare_digest(calculado, esperado)
+
+    # ==================================================================
+    # 3. DADOS DE DEMONSTRAÇÃO
+    #    Catálogo, disciplinas e cenário fictício inicial
+    # ==================================================================
 
     def garantir_catalogo_demo(self) -> None:
         """Insere recursos fictícios somente quando o catálogo estiver vazio."""
@@ -231,6 +253,11 @@ class StudyTrackService:
             atividade_bruno["id_atividade"], matematica["id_material"]
         )
 
+    # ==================================================================
+    # 4. CASOS DE USO DO ADMINISTRADOR
+    #    Manutenção do catálogo de materiais
+    # ==================================================================
+
     def adicionar_material_admin(
         self,
         nome: str,
@@ -246,6 +273,13 @@ class StudyTrackService:
     def remover_material_admin(self, id_material: int) -> None:
         """Remove um item do catálogo e seus vínculos de estudo."""
         self.repositorio.remover("materiais", id_material)
+
+    # ==================================================================
+    # 5. CASOS DE USO DO ALUNO
+    #    Operações restritas aos dados do aluno autenticado
+    # ==================================================================
+
+    # --- Consultas ---
 
     def listar_atividades_aluno(self, id_aluno: int) -> list[dict[str, Any]]:
         """Lista somente tarefas pertencentes aos planos do aluno autenticado."""
@@ -267,6 +301,8 @@ class StudyTrackService:
             for item in self.repositorio.listar("planos")
             if item["id_aluno"] == id_aluno
         ]
+
+    # --- Alterações (com checagem de propriedade) ---
 
     def atualizar_atividade_aluno(
         self,
@@ -312,6 +348,11 @@ class StudyTrackService:
         if plano["id_aluno"] != id_aluno:
             raise NotFoundError("Atividade não encontrada nos seus planos.")
         return self.associar_material(id_atividade, id_material)
+
+    # ==================================================================
+    # 6. CADASTRO DE ALUNO
+    #    Geração do hash de senha e criação de conta + perfil
+    # ==================================================================
 
     @staticmethod
     def _hash_senha(senha: str) -> str:
@@ -373,6 +414,14 @@ class StudyTrackService:
             "email": conta["email"],
         }
 
+    # ==================================================================
+    # 7. REGRAS DE DOMÍNIO
+    #    Criação e atualização de planos, disciplinas, atividades,
+    #    materiais e vínculos (sem checagem de dono)
+    # ==================================================================
+
+    # --- Planos de estudo ---
+
     def criar_plano(
         self,
         id_aluno: int,
@@ -406,6 +455,8 @@ class StudyTrackService:
             },
         )
 
+    # --- Disciplinas ---
+
     def criar_disciplina(self, nome: str, descricao: str = "") -> dict[str, Any]:
         """Adiciona uma disciplina ao catálogo acadêmico."""
         disciplina = Disciplina(
@@ -419,6 +470,8 @@ class StudyTrackService:
                 "descricao_disciplina": disciplina.descricao_disciplina,
             },
         )
+
+    # --- Atividades ---
 
     def criar_atividade(
         self,
@@ -454,6 +507,8 @@ class StudyTrackService:
                 "status": atividade.status,
             },
         )
+
+    # --- Materiais e vínculos com atividades ---
 
     def cadastrar_material(
         self,
@@ -501,6 +556,8 @@ class StudyTrackService:
             },
         )
 
+    # --- Atualização de atividade ---
+
     def atualizar_atividade(
         self,
         id_atividade: int,
@@ -528,6 +585,11 @@ class StudyTrackService:
                 "status": atividade.status,
             },
         )
+
+    # ==================================================================
+    # 8. CONSULTAS E UTILITÁRIOS
+    #    Busca no catálogo, listagens genéricas, exclusão e resumo
+    # ==================================================================
 
     def buscar_catalogo(
         self,
