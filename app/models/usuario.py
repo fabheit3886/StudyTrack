@@ -43,7 +43,7 @@ class Usuario:
 
     @property
     def senha(self) -> str:
-        """Hash da senha; a senha em texto puro não é armazenada."""
+        """Senha do usuário."""
         return self._senha
 
     @senha.setter

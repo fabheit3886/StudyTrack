@@ -1,25 +1,24 @@
-"""Exceções de domínio usadas para apresentar erros claros no StudyTrack."""
+"""Exceções do StudyTrack."""
 
 
 class StudyTrackError(Exception):
-    """Erro esperado da aplicação que pode ser mostrado ao usuário."""
+    """Erro base do sistema."""
 
 
 class ValidationError(StudyTrackError):
-    """Indica que um dado informado não atende às regras do domínio."""
+    """Dado inválido."""
 
 
 class NotFoundError(StudyTrackError):
-    """Indica que o registro solicitado não foi encontrado."""
+    """Registro não encontrado."""
 
 
 class DuplicateError(StudyTrackError):
-    """Indica conflito com uma regra de unicidade."""
+    """Registro repetido."""
 
 
+class AuthError(StudyTrackError):
+    """Falha no login."""
+    
 class PersistenceError(StudyTrackError):
-    """Indica falha ao ler ou gravar os dados persistentes."""
-
-
-class IntegrityError(PersistenceError):
-    """Indica que o arquivo de dados está corrompido ou inconsistente."""
+    """Erro relacionado à leitura ou gravação de dados."""
