@@ -10,11 +10,6 @@ from app.repositories.database import JsonRepository
 from app.services.studytrack_service import StudyTrackService
 from exceptions.erros import StudyTrackError
 
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stdin.reconfigure(encoding="utf-8")
-except (AttributeError, OSError):
-    pass
 
 ADMIN_LOGIN = "admin"
 ADMIN_PASSWORD = "admin123"
@@ -47,7 +42,6 @@ def _faixa(titulo: str, subtitulo: str = "") -> None:
 
 
 def _carregando(texto: str) -> None:
-    """Mostra uma animação breve sem poluir saídas redirecionadas."""
     if not sys.stdout.isatty():
         return
     sys.stdout.write(f"{Visual.dim}{texto} ")
